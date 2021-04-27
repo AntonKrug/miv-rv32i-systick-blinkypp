@@ -185,11 +185,11 @@ namespace GPIO {
         // instance of the structure. And just directly initializing member
         // variables with initializer lists
         constexpr instance_s(
-            uint32_t baseAddressInit,
+            uint32_t      baseAddressInit,
             apbBusWidth_e apbWidthInit,
-            uint32_t numberOfIOsInit):
+            uint32_t      numberOfIOsInit):
                 baseAddress(baseAddressInit),
-                apbWidth(apbWidthInit),
+                apbWidth(   apbWidthInit),
                 numberOfIOs(numberOfIOsInit) {}
     };
 
