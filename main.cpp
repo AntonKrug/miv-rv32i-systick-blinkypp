@@ -179,10 +179,17 @@ namespace GPIO {
             return {baseAddress, apbWidth, numberOfIOs};
         }
 
-    private:  // private constructor so only the "makeInstance" function can create instance of the structure
-        constexpr instance_s(uint32_t baseAddress, apbBusWidth_e apbWidth, uint32_t numberOfIOs):
-            baseAddress(baseAddress), apbWidth(apbWidth), numberOfIOs(numberOfIOs) {} // directly initializing member variables with initializer lists
-
+    private:
+        // Private constructor so only the "makeInstance" function can create
+        // instance of the structure. And just directly initializing member
+        // variables with initializer lists
+        constexpr instance_s(
+            uint32_t baseAddressInit,
+            apbBusWidth_e apbWidthInit,
+            uint32_t numberOfIOsInit):
+                baseAddress(baseAddressInit),
+                apbWidth(apbWidthInit),
+                numberOfIOs(numberOfIOsInit) {}
     };
 
 
@@ -212,7 +219,7 @@ namespace GPIO {
                 break;
 
             default:
-                // we asserted this when we got the instance_s, this shouldn't be reached
+                // We asserted this when we got the instance_s, this shouldn't be reached
                 break;
         }
     }
@@ -244,7 +251,7 @@ namespace GPIO {
                 break;
 
             default:
-                // we asserted this when we got the instance_s, this shouldn't be reached
+                // We asserted this when we got the instance_s, this shouldn't be reached
                 break;
         }
     }
@@ -253,10 +260,14 @@ namespace GPIO {
 
 
 constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2>();
-// constexpr auto rogueInstance = GPIO::instance_s{0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2};   // will fail because the constructor is private
+
+// Circumventing the makeInstance sanity checks by calling the structure directly
+// is not possible because the constructor is private a compilation will fail
+// constexpr auto rogueStructure = GPIO::instance_s{0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2};
 
 
 int main(void) {
+
     GPIO::init<&gpioOut>();
 
     GPIO::config<&gpioOut, GPIO::port_e::io0>(GPIO::portMode_e::output);
