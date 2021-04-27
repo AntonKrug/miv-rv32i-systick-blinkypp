@@ -14,6 +14,7 @@ Read the miv-rv32i-systick-blinky's for generic and target information (this rea
  
  - Namespaces https://www.cplusplus.com/doc/oldtutorial/namespaces/ 
  - Uniform Initialization https://digestcpp.com/cpp11/uniform/ https://docs.microsoft.com/en-us/cpp/cpp/initializers?view=msvc-160
+ - Constructors and member initializer lists https://en.cppreference.com/w/cpp/language/constructor
  - ``enum class`` https://en.cppreference.com/w/cpp/language/enum
  - ``auto`` https://en.cppreference.com/w/cpp/language/auto
  - ``static_assert`` https://en.cppreference.com/w/cpp/language/static_assert
@@ -25,9 +26,18 @@ Read the miv-rv32i-systick-blinky's for generic and target information (this rea
  - Binary literal https://en.cppreference.com/w/cpp/language/integer_literal
  - Digit separator https://en.wikipedia.org/wiki/C%2B%2B14#Digit_separators
  
-## C++17 features
+## C++17 feature
 
  - Non-type template arguments https://en.cppreference.com/w/cpp/language/template_parameters
+
+## Design pattern
+
+Factory design pattern was used to restrict how *instance_s* structure can be created. Because *make_instance* does extra sanity checks, it was desirable to forbid any other way of making the structures. This can be achieved with a factory pattern. 
+
+http://www.vishalchovatiya.com/factory-design-pattern-in-modern-cpp/
+
+Doing these extra checkes are not possible from constructor as constructors can't be used directly with templates, while template arguments are essential for the static_assert.
+
 
 ## Disabled features
 Despite the majority of C++ features being safe to use without a overhead (when converting project from C). Few features will cause overhead, in an embedded environment it's good to disable them and only enabled them when it's understood that they are a must-have.
