@@ -71,17 +71,17 @@ void SysTick_Handler(void)
 namespace HAL {
 
     __attribute__((optimize("-O1"),always_inline))
-    inline void set32bitReg(uint32_t registerAddress, uint32_t addressOffset, uint32_t value) {
+    inline void set32bitReg(uintptr_t registerAddress, uint32_t addressOffset, uint32_t value) {
         *(volatile uint32_t *)(registerAddress + addressOffset) = value;
     }
 
     __attribute__((optimize("-O1"),always_inline))
-    inline void set16bitReg(uint32_t registerAddress, uint32_t addressOffset, uint16_t value)  {
+    inline void set16bitReg(uintptr_t registerAddress, uint32_t addressOffset, uint16_t value)  {
         *(volatile uint16_t *)(registerAddress + addressOffset) = value;
     }
 
     __attribute__((optimize("-O1"),always_inline))
-    inline void set8bitReg(uint32_t registerAddress, uint32_t addressOffset, uint8_t value)  {
+    inline void set8bitReg(uintptr_t registerAddress, uint32_t addressOffset, uint8_t value)  {
         *(volatile uint8_t *)(registerAddress + addressOffset)  = value;
     }
 
@@ -98,7 +98,7 @@ namespace GPIO {
     };
 
     struct instance_s {
-        uint32_t      baseAddress;
+        uintptr_t     baseAddress;
         apbBusWidth_e apbWidth;
         uint32_t      numberOfIOs;
     };
