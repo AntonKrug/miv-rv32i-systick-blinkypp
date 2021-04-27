@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT
  *
  * Revision history:
+ *  2021/04/27 v1.2 anton.krug@gmail.com (using factory design pattern)
  *  2021/04/26 v1.1 anton.krug@gmail.com (first release)
  */
 
