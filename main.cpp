@@ -97,12 +97,6 @@ namespace GPIO {
         unknownWidth = 3
     };
 
-    struct instance_s {
-        uintptr_t     baseAddress;
-        apbBusWidth_e apbWidth;
-        uint32_t      numberOfIOs;
-    };
-
     enum class outOffset_e: uint32_t {
         offset0 = 0xA0,
         offset1 = 0xA4,
@@ -164,20 +158,33 @@ namespace GPIO {
         inout  = 0b011
     };
 
-    template<uint32_t baseAddress, apbBusWidth_e apbWidth, uint32_t numberOfIOs>
-    constexpr instance_s makeInstance() {
-        // Check for valid base address
-        static_assert((baseAddress % 4) == 0,                                          "The GPIO base port address needs to be 32-bit aligned");
-        static_assert((baseAddress >= 0x7000'0000UL) && (baseAddress < 0x8000'2000UL), "The GPIO has to be within the APB bus range");
 
-        // Check for correct bus width
-        static_assert(apbWidth != apbBusWidth_e::unknownWidth,                         "The APB bus width has to be 8-bit, 16-bit or 32-bit");
+    struct instance_s {
+        uintptr_t     baseAddress;
+        apbBusWidth_e apbWidth;
+        uint32_t      numberOfIOs;
 
-        // Check for valid number of IOs
-        static_assert(numberOfIOs>0 && numberOfIOs<=32,                                "The number of IOs in this GPIO port_s needs to be between 1-32");
+        template<uint32_t baseAddress, apbBusWidth_e apbWidth, uint32_t numberOfIOs>
+        constexpr static instance_s makeInstance() {
+            // Check for valid base address
+            static_assert((baseAddress % 4) == 0,                                          "The GPIO base port address needs to be 32-bit aligned");
+            static_assert((baseAddress >= 0x7000'0000UL) && (baseAddress < 0x8000'2000UL), "The GPIO has to be within the APB bus range");
 
-        return {baseAddress, apbWidth, numberOfIOs};
-    }
+            // Check for correct bus width
+            static_assert(apbWidth != apbBusWidth_e::unknownWidth,                         "The APB bus width has to be 8-bit, 16-bit or 32-bit");
+
+            // Check for valid number of IOs
+            static_assert(numberOfIOs>0 && numberOfIOs<=32,                                "The number of IOs in this GPIO port_s needs to be between 1-32");
+
+            return {baseAddress, apbWidth, numberOfIOs};
+        }
+
+    private:  // private constructor so only the "makeInstance" function can create instance of the structure
+        constexpr instance_s(uint32_t baseAddress, apbBusWidth_e apbWidth, uint32_t numberOfIOs):
+            baseAddress(baseAddress), apbWidth(apbWidth), numberOfIOs(numberOfIOs) {} // directly initializing member variables with initializer lists
+
+    };
+
 
     template<const instance_s* thisGpio>
     void init() {
@@ -245,7 +252,8 @@ namespace GPIO {
 }
 
 
-constexpr auto gpioOut = GPIO::makeInstance<0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2>();
+constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2>();
+// constexpr auto rogueInstance = GPIO::instance_s{0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2};   // will fail because the constructor is private
 
 
 int main(void) {
