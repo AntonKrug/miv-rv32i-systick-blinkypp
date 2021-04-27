@@ -186,7 +186,7 @@ if (GPIO::irqOffset_e::offset0 == GPIO::outOffset_e::offset0) {
 
 ```C++
 template<uint32_t baseAddress, apbBusWidth_e apbWidth, uint32_t numberOfIOs>
-constexpr instance_s makeInstance() {
+constexpr static instance_s makeInstance() {
     // Check for valid base address
     static_assert((baseAddress % 4) == 0, 
         "The GPIO base port address needs to be 32-bit aligned");
@@ -207,7 +207,7 @@ constexpr instance_s makeInstance() {
 
 Then using functions with plenty of sanity checks and asserts will make harder for users to introduce accidental bugs:
 ```C++
-constexpr auto gpioOut = GPIO::makeInstance<0x7000'5002UL, GPIO::apbBusWidth_e::bits32, 2>();
+constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5002UL, GPIO::apbBusWidth_e::bits32, 2>();
 ```
 
 ```
@@ -218,25 +218,36 @@ Providing different enums types or literals by accident (even when they have exa
 
 Different enum:
 ```C++
-constexpr auto gpioOut = GPIO::makeInstance<0x7000'5000UL, GPIO::irqOffset_e::offset0, 2>();
+constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, GPIO::irqOffset_e::offset0, 2>();
 ```
 
 ```
 ../main.cpp:248:91: error: could not convert template argument 'offset0' from 'GPIO::irqOffset_e' to 'GPIO::apbBusWidth_e'
- constexpr auto gpioOut = GPIO::makeInstance<0x7000'5000UL, GPIO::irqOffset_e::offset0, 2>();
+ constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, GPIO::irqOffset_e::offset0, 2>();
                                                                                            ^
  ```
 
 Literal number:
 ```C++
-constexpr auto gpioOut = GPIO::makeInstance<0x7000'5000UL, 1, 2>();
+constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, 1, 2>();
 ````
 
  ```
  ../main.cpp:248:66: error: could not convert template argument '1' from 'int' to 'GPIO::apbBusWidth_e'
- constexpr auto gpioOut = GPIO::makeInstance<0x7000'5000UL, 1, 2>();
+ constexpr auto gpioOut = GPIO::instance_s::makeInstance<0x7000'5000UL, 1, 2>();
                                                                   ^
  ```
+
+ It's not possible to change the values of the *instance_s* after it was instanciated as constexpr (as it's just read only). And it's not possible to create the *instance_s* without the use of the GPIO::instance_s::makeInstance function and not possible to circumvent all the asserts/checks.
+
+Trying to make the structure directly without using its factory function:
+```c++
+constexpr auto rogueStructure = GPIO::instance_s{0x7000'5000UL, GPIO::apbBusWidth_e::bits32, 2};
+```
+Will fail to complie:
+```
+../main.cpp:267:95: error: 'constexpr GPIO::instance_s::instance_s(uint32_t, GPIO::apbBusWidth_e, uint32_t)' is private within this context
+```
 
  If the enum needs to be converted to a number, then it needs to be explicitly cast:
  ```C++
