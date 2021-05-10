@@ -14,7 +14,7 @@ Read the miv-rv32i-systick-blinky's for generic and target information (this rea
  
  - Namespaces https://www.cplusplus.com/doc/oldtutorial/namespaces/ 
  - Uniform Initialization https://digestcpp.com/cpp11/uniform/ https://docs.microsoft.com/en-us/cpp/cpp/initializers?view=msvc-160
- - Constructors and member initializer lists https://en.cppreference.com/w/cpp/language/constructor
+ - Constructors and member initializer lists https://en.cppreference.com/w/cpp/language/constructor https://docs.microsoft.com/en-us/cpp/cpp/constructors-cpp?view=msvc-160
  - ``enum class`` https://en.cppreference.com/w/cpp/language/enum
  - ``auto`` https://en.cppreference.com/w/cpp/language/auto
  - ``static_assert`` https://en.cppreference.com/w/cpp/language/static_assert
